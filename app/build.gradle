@@ -1,0 +1,113 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+
+android {
+    compileSdkVersion 27
+
+    applicationVariants.all { variant ->
+        variant.outputs.all { output ->
+            outputFileName = "xkcd-v${variant.versionName}-${variant.name}.apk"
+        }
+    }
+
+    defaultConfig {
+        applicationId "com.jahirfiquitiva.xkcd"
+        minSdkVersion 16
+        targetSdkVersion 27
+        versionCode 1
+        versionName "1.0"
+        vectorDrawables.useSupportLibrary true
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    sourceSets {
+        androidTest.java.srcDirs += 'src/androidTest/kotlin'
+        main.java.srcDirs += 'src/main/kotlin'
+        test.java.srcDirs += 'src/test/kotlin'
+    }
+
+    lintOptions {
+        quiet true
+        abortOnError false
+        ignoreWarnings true
+    }
+
+    packagingOptions {
+        pickFirst 'META-INF/core_debug.kotlin_module'
+        pickFirst 'META-INF/core_release.kotlin_module'
+        pickFirst 'META-INF/library_debug.kotlin_module'
+        pickFirst 'META-INF/library_release.kotlin_module'
+        pickFirst 'META-INF/commons_debug.kotlin_module'
+        pickFirst 'META-INF/commons_release.kotlin_module'
+        pickFirst 'META-INF/local_debug.kotlin_module'
+        pickFirst 'META-INF/local_release.kotlin_module'
+        pickFirst 'META-INF/remote_debug.kotlin_module'
+        pickFirst 'META-INF/remote_release.kotlin_module'
+        exclude 'LICENSE.txt'
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/ASL2.0'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/LICENSE'
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    implementation Libs.appcompat
+    implementation Libs.design
+    implementation Libs.cardview
+    implementation Libs.recyclerview
+
+    implementation Libs.archHelpers
+    implementation Libs.ziv
+
+    implementation Libs.permissions
+
+    implementation(Libs.mdDialogs) {
+        transitive = true
+        exclude group: 'com.android.support'
+        exclude group: 'com.mikepenz'
+    }
+
+    implementation Libs.glide
+    implementation Libs.glideOkhttp
+    kapt Libs.glideCompiler
+
+    implementation Libs.room
+    kapt Libs.roomCompiler
+
+    implementation Libs.fabsDial
+
+    implementation Libs.okhttp
+
+    implementation 'com.squareup.picasso:picasso:2.71828'
+}
+
+configurations {
+    all {
+        resolutionStrategy {
+            force Libs.kotlin
+            force Libs.appcompat
+        }
+    }
+    all*.exclude module: 'constraint'
+    all*.exclude module: 'transition'
+    all*.exclude module: 'mediarouter-v7'
+    all*.exclude module: 'support-media-compat'
+    all*.exclude module: 'support-v4'
+    all*.exclude group: 'com.google.code'
+    all*.exclude group: 'com.android.support', module: 'support-v13'
+}
